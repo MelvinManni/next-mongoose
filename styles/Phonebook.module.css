@@ -1,0 +1,31 @@
+.card {
+  -webkit-box-shadow: 0px 0px 36px -17px rgba(213, 213, 217, 1);
+  -moz-box-shadow: 0px 0px 36px -17px rgba(213, 213, 217, 1);
+  box-shadow: 0px 0px 36px -17px rgba(213, 213, 217, 1);
+  background: #fff;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.title {
+  color: #727272;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.15;
+  font-size: 4rem;
+}
+
+.text {
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.5;
+  font-size: 1.5rem;
+}
+
+.textWrapper {
+  margin-bottom: 10px;
+}
+
+.textWrapper:last-child {
+  margin-bottom: 0px;
+}
