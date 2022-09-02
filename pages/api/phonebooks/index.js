@@ -9,7 +9,7 @@ const getPhonebooks = async (req, res) => {
   try {
     const user = req.user;
 
-    const phonebooks = await Phonebook.find({user});
+    const phonebooks = await Phonebook.find({ user });
     res.status(200).json({
       status: "success",
       count: phonebooks.length,
@@ -22,9 +22,9 @@ const getPhonebooks = async (req, res) => {
 
 const addPhoneBook = async (req, res) => {
   try {
-    const user = req.user
-
+    const user = req.user;
     await Phonebook.create({ ...req.body, user });
+
     res.status(201).json({
       status: "success",
       message: "phonebook successfully created",

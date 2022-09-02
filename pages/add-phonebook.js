@@ -8,6 +8,7 @@ import phonebookStyles from "../styles/Phonebook.module.css";
 
 export default function Home() {
   const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
   const [state, setState] = useState({
     name: "",
     mobile: "",
@@ -23,16 +24,27 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-
-    await axios.post("/api/phonebooks/", state);
-
-    setState({
-      name: "",
-      mobile: "",
-      fax: "",
-      work: "",
-    });
+    setLoading(true);
+    try {
+      await fetch("/api/phonebooks/", {
+        method: "post",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(state),
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setState({
+        name: "",
+        mobile: "",
+        fax: "",
+        work: "",
+      });
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,7 +74,9 @@ export default function Home() {
                 <input onChange={handleChange} name="mobile" value={state.mobile} type="text" placeholder="Enter contact mobile no." />
                 <input onChange={handleChange} name="fax" value={state.fax} type="text" placeholder="Enter contact fax no." />
                 <input onChange={handleChange} name="work" value={state.work} type="text" placeholder="Enter contact work no." />
-                <button className={`${styles.btn} ${styles.centerBtn}`}>Create Contact</button>
+                <button disabled={loading} className={`${styles.btn} ${styles.centerBtn}`}>
+                  {loading ? "Creating..." : "Create Contact"}
+                </button>
               </form>
             </div>
           </>

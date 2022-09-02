@@ -2,12 +2,16 @@ import axios from "axios";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import styles from "../styles/Home.module.css";
-import phonebookStyles from "../styles/Phonebook.module.css";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import styles from "../../styles/Home.module.css";
+import phonebookStyles from "../../styles/Phonebook.module.css";
 
 export default function Home({ contact }) {
   const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const query = router.query;
   const [state, setState] = useState({
     name: "",
     mobile: "",
@@ -15,9 +19,17 @@ export default function Home({ contact }) {
     work: "",
   });
 
+  const getContact = useCallback(async () => {
+    if (session) {
+      const res = await fetch("/api/phonebooks/" + query.id);
+      const data = await res.json();
+      data.contact && setState(data.contact);
+    }
+  }, [query.id, session]);
+
   useEffect(() => {
-    setState(contact);
-  }, [contact]);
+    getContact();
+  }, [getContact]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,15 +39,15 @@ export default function Home({ contact }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    await axios.post("/api/phonebooks/", state);
-
-    setState({
-      name: "",
-      mobile: "",
-      fax: "",
-      work: "",
-    });
+    setLoading(true);
+    try {
+      await axios.patch("/api/phonebooks/" + query.id, state);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      getContact()
+    }
   };
 
   return (
@@ -56,16 +68,18 @@ export default function Home({ contact }) {
             <div className={styles.linkText}>
               <Link href="/"> Go Back</Link>
             </div>
-            <h4 className="text-center">Add New Contact</h4>
+            <h4 className="text-center">Update Contact: {query.id}</h4>
             <button onClick={signOut}>Sign Out</button>
 
             <div className={styles.cardContainer}>
               <form onSubmit={handleSubmit} className={phonebookStyles.card}>
-                <input onChange={handleChange} name="name" value={state.name} type="text" placeholder="Enter contact name" />
-                <input onChange={handleChange} name="mobile" value={state.mobile} type="text" placeholder="Enter contact mobile no." />
-                <input onChange={handleChange} name="fax" value={state.fax} type="text" placeholder="Enter contact fax no." />
-                <input onChange={handleChange} name="work" value={state.work} type="text" placeholder="Enter contact work no." />
-                <button className={`${styles.btn} ${styles.centerBtn}`}>Create Contact</button>
+                <input onChange={handleChange} name="name" value={state.name || ""} type="text" placeholder="Enter contact name" />
+                <input onChange={handleChange} name="mobile" value={state.mobile || ""} type="text" placeholder="Enter contact mobile no." />
+                <input onChange={handleChange} name="fax" value={state.fax || ""} type="text" placeholder="Enter contact fax no." />
+                <input onChange={handleChange} name="work" value={state.work || ""} type="text" placeholder="Enter contact work no." />
+                <button disabled={loading} className={`${styles.btn} ${styles.centerBtn}`}>
+                  {loading ? "Updating..." : "Update Contact"}
+                </button>
               </form>
             </div>
           </>
@@ -73,13 +87,4 @@ export default function Home({ contact }) {
       </main>
     </div>
   );
-}
-
-export async function getServerSideProps(context) {
-  const { data: res } = await axios.get("/api/phonebooks/" + context.query.id);
-  return {
-    props: {
-      contact: res.contact,
-    }, // will be passed to the page component as props
-  };
 }

@@ -5,6 +5,38 @@
   background: #fff;
   padding: 15px;
   border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card button {
+  background-color: #5685d0;
+  border: none;
+  color: #fff;
+  height: 35px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 25%);
+  -moz-box-sizing: border-box;
+  -webkit-transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
+  transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 600;
+  font-family: Roboto, arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.21px;
+}
+
+.card button:last-child {
+  background-color: rgb(98, 25, 19);
 }
 
 .title {
@@ -12,14 +44,15 @@
   font-weight: 600;
   margin: 0;
   line-height: 1.15;
-  font-size: 4rem;
+  font-size: 0.8rem;
 }
 
 .text {
   font-weight: 500;
   margin: 0;
   line-height: 1.5;
-  font-size: 1.5rem;
+  color: #121;
+  font-size: 0.9rem;
 }
 
 .textWrapper {

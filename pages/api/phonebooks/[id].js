@@ -11,6 +11,7 @@ const getPhonebook = async (req, res) => {
       user: req.user,
       _id: req.query.id,
     });
+
     res.status(200).json({
       status: "success",
       contact: phonebook,

@@ -1,12 +1,28 @@
+import axios from "axios";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import PhonebookCard from "../components/PhonebookCard";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
+  const [phonebooks, setPhonebooks] = useState([]);
   const { data: session } = useSession();
 
-  console.log(session);
+  const getPhonebooks = useCallback(async () => {
+    if (session) {
+      const res = await fetch("/api/phonebooks/");
+      const data = await res.json();
+      console.log(data);
+      data.phonebooks && setPhonebooks(data.phonebooks);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    getPhonebooks();
+  }, [getPhonebooks]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -32,7 +48,21 @@ export default function Home() {
               <Link href="/add-phonebook"> Add Contact</Link>
             </div>
 
-            <div className={styles.cardContainer}></div>
+            <div className={styles.cardContainer}>
+              <div className="cardGrid">
+                {phonebooks.map((contact) => (
+                  <PhonebookCard
+                    key={contact._id}
+                    name={contact.name}
+                    fax={contact.fax}
+                    mobile={contact.mobile}
+                    work={contact.work}
+                    id={contact._id}
+                    refresh={getPhonebooks}
+                  />
+                ))}
+              </div>
+            </div>
           </>
         )}
       </main>
