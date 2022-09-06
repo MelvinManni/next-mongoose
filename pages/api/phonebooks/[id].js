@@ -26,7 +26,6 @@ const updatePhonebook = async (req, res) => {
     const user = req.user;
 
     const docId = req.query.id;
-
     // Remove field we do not want to update
     req.body.user = undefined;
     req.body._id = undefined;

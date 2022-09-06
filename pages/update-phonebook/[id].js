@@ -41,7 +41,7 @@ export default function Home({ contact }) {
     setLoading(true);
     try {
       await fetch("/api/phonebooks/" + query.id, {
-        method: "patch",
+        method: "PATCH",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
