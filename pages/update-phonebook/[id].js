@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
@@ -41,7 +40,14 @@ export default function Home({ contact }) {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.patch("/api/phonebooks/" + query.id, state);
+      await fetch("/api/phonebooks/" + query.id, {
+        method: "patch",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(state),
+      });
     } catch (error) {
       console.log(error);
     } finally {
