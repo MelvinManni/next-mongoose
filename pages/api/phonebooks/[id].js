@@ -1,9 +1,7 @@
 import { getToken } from "next-auth/jwt";
-import { connectMongo } from "../../../config/database/connection";
 import Phonebook from "../../../config/database/models/phonebook";
 import Session from "../../../config/database/models/session";
-
-const secret = process.env.SECRET;
+import verifyUserSession from "../../../config/utils/verifyUserSession";
 
 const getPhonebook = async (req, res) => {
   try {
@@ -55,26 +53,14 @@ const deletePhonebook = async (req, res) => {
 };
 
 export default async function handler(req, res) {
-  await connectMongo();
   const { method } = req;
 
-  const sessionToken = await getToken({ req, secret, raw: true });
-
-  if (!sessionToken) {
-    return res.status(401).json({ status: "failed", message: "please login!" });
-  }
-
-  const user = await Session.findOne({ sessionToken });
-
-  if (!user) {
-    return res.status(404).json({ status: "failed", message: "session or user does not exist" });
-  }
-
-  if (new Date(user?.expires) < new Date()) {
-    return res.status(440).json({ status: "failed", message: "session expired!" });
-  }
-
-  req.user = user.userId;
+  await verifyUserSession({
+    req,
+    res,
+    getToken,
+    Session,
+  });
 
   switch (method) {
     case "GET":
